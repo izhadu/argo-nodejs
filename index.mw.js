@@ -21,8 +21,8 @@ const PORT = process.env.SERVER_PORT || process.env.PORT || 3000; // Web 服务�
 const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 节点连接的唯一身份凭证 
 
 // [Cloudflare Argo 隧道配置]
-const ARGO_DOMAIN = process.env.ARGO_DOMAIN || 'dcdeploy-zhadukan.clo.ccwu.cc';          // CF 固定的 Public Hostname 域名 (留空则使用 TryCloudflare 临时隧道)
-const ARGO_AUTH = process.env.ARGO_AUTH || 'eyJhIjoiOGI0YjkxZDNiNWNjZGMzNDEzM2I4MTljOGM1OWRiZGQiLCJ0IjoiZWE1ODllMTktYzFjOC00YzUxLWJmNjgtODA5MWU0ZTNkZDZiIiwicyI6Ik5HTXdObU16TVdVdE16ZzJaUzAwWlRJNUxUZzRZekF0T0dFM01qa3lObVV3WmpCaCJ9';              // CF 隧道的 Token (eyJh...) 或 TunnelSecret JSON 配置
+const ARGO_DOMAIN = process.env.ARGO_DOMAIN || 'wispbyte.cle.ccwu.cc';          // CF 固定的 Public Hostname 域名 (留空则使用 TryCloudflare 临时隧道)
+const ARGO_AUTH = process.env.ARGO_AUTH || 'eyJhIjoiOGI0YjkxZDNiNWNjZGMzNDEzM2I4MTljOGM1OWRiZGQiLCJ0IjoiOGU5M2YwZjItYjU4YS00M2M2LThkYzAtMGVlZjFlNzE2NmNlIiwicyI6Ik5EZ3hPR0l4WkdZdE1EazBOeTAwTWpBMExUZzJObVF0TkRjMk5tWmtaalJpTmpSbCJ9';              // CF 隧道的 Token (eyJh...) 或 TunnelSecret JSON 配置
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // Xray 本地监听端口，承接 Argo 隧道转发的流量
 
 // [节点伪装与优选配置]
