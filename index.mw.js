@@ -21,14 +21,23 @@ const PORT = process.env.SERVER_PORT || process.env.PORT || 3000; // Web 服务�
 const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 节点连接的唯一身份凭证 
 
 // [Cloudflare Argo 隧道配置]
-const ARGO_DOMAIN = process.env.ARGO_DOMAIN || 'wispbyte.cle.ccwu.cc';          // CF 固定的 Public Hostname 域名 (留空则使用 TryCloudflare 临时隧道)
+const ARGO_DOMAIN = process.env.ARGO_DOMAIN || 'wispbyte.wct.kdns.fr';          // CF 固定的 Public Hostname 域名 (留空则使用 TryCloudflare 临时隧道)
 const ARGO_AUTH = process.env.ARGO_AUTH || 'eyJhIjoiOGI0YjkxZDNiNWNjZGMzNDEzM2I4MTljOGM1OWRiZGQiLCJ0IjoiOGU5M2YwZjItYjU4YS00M2M2LThkYzAtMGVlZjFlNzE2NmNlIiwicyI6Ik5EZ3hPR0l4WkdZdE1EazBOeTAwTWpBMExUZzJObVF0TkRjMk5tWmtaalJpTmpSbCJ9';              // CF 隧道的 Token (eyJh...) 或 TunnelSecret JSON 配置
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // Xray 本地监听端口，承接 Argo 隧道转发的流量
 
 // [节点伪装与优选配置]
-const CFIP = process.env.CFIP || 'cf.saas.zhadu.com';            // 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名
+const CFIP = process.env.CFIP || 'saas.zhadu.com';            // 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名
 const CFPORT = parseInt(process.env.CFPORT || 443, 10);     // 订阅节点中连接的 CF 边缘端口
 const NAME = process.env.NAME || 'vls';           // 节点名称前缀
+
+// [自动化附加功能配置]
+const UPLOAD_URL = process.env.UPLOAD_URL || '';            // 第三方订阅面板 API 地址，用于自动上传节点
+const PROJECT_URL = process.env.PROJECT_URL || '';          // 当前容器的公网 URL，配合 UPLOAD_URL 使用
+const CHAT_ID = process.env.CHAT_ID || '';                  // Telegram 接收通知的 Chat ID (留空禁用 TG 推送)
+const BOT_TOKEN = process.env.BOT_TOKEN || '';              // Telegram 机器人的 Token
+
+// [自定义 Web 订阅链接配置]
+const MY_WEB_URL = process.env.MY_WEB_URL || 'vls-northflank.wct.kdns.fr';
 
 // [多协议直连端口 (适用于支持多端口开放的环境)]
 const S5_PORT = process.env.S5_PORT || 'socks5://zhadukan:asp789.coM@163.192.61.84:10001';                  // Socks5 协议的公网直连 TCP 端口
@@ -39,12 +48,6 @@ const REALITY_PORT = process.env.REALITY_PORT || '';        // VLESS-Reality 协
 const NEZHA_SERVER = process.env.NEZHA_SERVER || '';        // 探针服务端地址 (v1 填 "域名:端口"，v0 仅填 "域名")
 const NEZHA_PORT = process.env.NEZHA_PORT || '';            // 探针服务端的 RPC 端口 (仅 v0 需要填写，v1 留空)
 const NEZHA_KEY = process.env.NEZHA_KEY || '';              // 探针客户端的安全认证密钥 (Client Secret)
-
-// [自动化附加功能配置]
-const UPLOAD_URL = process.env.UPLOAD_URL || '';            // 第三方订阅面板 API 地址，用于自动上传节点
-const PROJECT_URL = process.env.PROJECT_URL || '';          // 当前容器的公网 URL，配合 UPLOAD_URL 使用
-const CHAT_ID = process.env.CHAT_ID || '';                  // Telegram 接收通知的 Chat ID (留空禁用 TG 推送)
-const BOT_TOKEN = process.env.BOT_TOKEN || '';              // Telegram 机器人的 Token
 
 // [日志控制]
 const SHOW_LOG = !['false', 'disable', 'no'].includes((process.env.SHOW_LOG || 'no').toLowerCase()); 
@@ -356,6 +359,16 @@ async function generateLinks(argoDomain) {
       fs.writeFileSync(subPath, Buffer.from(subTxt).toString('base64'));
       fs.writeFileSync(listPath, subTxt, 'utf8');
       subContent = Buffer.from(subTxt).toString('base64');
+      
+      // ==========================================
+      // 新增：将 Web 服务的访问连接写入到本地文件中
+      // ==========================================
+      const webAccessUrl = MY_WEB_URL ? MY_WEB_URL : (PROJECT_URL ? `https://${PROJECT_URL}/${SUB_PATH}` : `http://${SERVER_IP}:${PORT}/${SUB_PATH}`);
+      const urlFilePath = path.join(FILE_PATH, 'web_url.txt');
+      fs.writeFileSync(urlFilePath, `Web 订阅服务链接: ${webAccessUrl}\n`, 'utf8');
+      alwaysLog(`[INFO] Web 链接已保存至: ${urlFilePath} -> ${webAccessUrl}`);
+      // ==========================================
+      
       uploadNodes();
       resolve(subTxt);
     }, 2000);
@@ -420,7 +433,7 @@ const server = http.createServer(async (req, res) => {
       res.end(data);
     } catch (err) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end("Hello world!<br><br>You can access /{SUB_PATH}(Default: /sub) to get your nodes!");
+      res.end(`Hello world!<br><br>You can access /${SUB_PATH}(Default: /sub) to get your nodes!`);
     }
     return;
   }
