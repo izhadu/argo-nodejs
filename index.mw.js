@@ -26,7 +26,7 @@ const ARGO_AUTH = process.env.ARGO_AUTH || 'eyJhIjoiOGI0YjkxZDNiNWNjZGMzNDEzM2I4
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // Xray 本地监听端口，承接 Argo 隧道转发的流量
 
 // [节点伪装与优选配置]
-const CFIP = process.env.CFIP || 'saas.zhadu.com';            // 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名
+const CFIP = process.env.CFIP || 'cf.saas.zhadu.com';            // 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名
 const CFPORT = parseInt(process.env.CFPORT || 443, 10);     // 订阅节点中连接的 CF 边缘端口
 const NAME = process.env.NAME || 'vls';           // 节点名称前缀
 
@@ -36,8 +36,8 @@ const PROJECT_URL = process.env.PROJECT_URL || '';          // 当前容器的�
 const CHAT_ID = process.env.CHAT_ID || '';                  // Telegram 接收通知的 Chat ID (留空禁用 TG 推送)
 const BOT_TOKEN = process.env.BOT_TOKEN || '';              // Telegram 机器人的 Token
 
-// [自定义 Web 订阅链接配置]
-const MY_WEB_URL = process.env.MY_WEB_URL || 'vls-northflank.wct.kdns.fr';
+// [自定义 Web 订阅域名配置]
+const MY_WEB_DOMAIN = process.env.MY_WEB_DOMAIN || 'vls-wispbyte.wct.kdns.fr'; // 仅填入域名，系统会自动拼接 https:// 和 SUB_PATH
 
 // [多协议直连端口 (适用于支持多端口开放的环境)]
 const S5_PORT = process.env.S5_PORT || 'socks5://zhadukan:asp789.coM@163.192.61.84:10001';                  // Socks5 协议的公网直连 TCP 端口
@@ -363,7 +363,8 @@ async function generateLinks(argoDomain) {
       // ==========================================
       // 新增：将 Web 服务的访问连接写入到本地文件中
       // ==========================================
-      const webAccessUrl = MY_WEB_URL ? MY_WEB_URL : (PROJECT_URL ? `https://${PROJECT_URL}/${SUB_PATH}` : `http://${SERVER_IP}:${PORT}/${SUB_PATH}`);
+      // 自动拼接 https:// 前缀和动态的 /${SUB_PATH} 路径
+      const webAccessUrl = MY_WEB_DOMAIN ? `https://${MY_WEB_DOMAIN}/${SUB_PATH}` : (PROJECT_URL ? `https://${PROJECT_URL}/${SUB_PATH}` : `http://${SERVER_IP}:${PORT}/${SUB_PATH}`);
       const urlFilePath = path.join(FILE_PATH, 'web_url.txt');
       fs.writeFileSync(urlFilePath, `Web 订阅服务链接: ${webAccessUrl}\n`, 'utf8');
       alwaysLog(`[INFO] Web 链接已保存至: ${urlFilePath} -> ${webAccessUrl}`);
