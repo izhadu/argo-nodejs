@@ -1,206 +1,106 @@
 <div align="center">
-  <h2>
-    <img src="https://cdn.nodeimage.com/i/NXz3ah3zTwikq3AdQOU0dYw3uyaBiGVj.webp" width="40" height="40" style="vertical-align: middle;"/> 
-    nodejs-argo隧道代理
-  </h2>
-  nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持多种代理协议（VLESS、VMess、Trojan等），并集成了哪吒探针功能。
-
----
-
-Telegram交流反馈群组：https://t.me/eooceu
+  <img src="https://cdn.nodeimage.com/i/NXz3ah3zTwikq3AdQOU0dYw3uyaBiGVj.webp" width="80" height="80" alt="logo"/> 
+  <h1>NodeJS Argo 隧道代理工具</h1>
+  <p>专为 PaaS 容器化平台与玩具机设计的 Argo 隧道节点部署方案</p>
+  
+  <a href="https://t.me/eooceu">💬 Telegram 交流反馈群组</a>
 </div>
 
-## 郑重声明
-* 本项目自2025年10月29日15时45分起,已更改开源协议,并包含以下特定要求
-* 此项目仅限个人使用，禁止用于商业行为(包括但不限于：youtube,bilibili,tiktok,facebook..等等)
-* 禁止新建项目将代码复制到自己仓库中用做商业行为
-* 请遵守当地法律法规,禁止滥用做公共代理行为
-* 如有违反以上条款者将追究法律责任
+---
 
-## 说明 （部署前请仔细阅读）
+## ⚠️ 郑重声明
 
-* 本项目是针对node环境的paas平台和游戏玩具而生，采用Argo隧道部署节点，集成哪吒探针v0或v1可选。
-* node玩具平台只需上传index.js和package.json即可，paas平台需要docker部署的才上传Dockerfile。
-* 不填写ARGO_DOMAIN和ARGO_AUTH两个变量即启用临时隧道，反之则使用固定隧道。
-* 哪吒v0/v1可选,当哪吒端口为{443,8443,2096,2087,2083,2053}其中之一时，自动开启tls。
-
-## 📋 环境变量
-
-| 变量名 | 是否必须 | 默认值 | 说明 |
-|--------|----------|--------|------|
-| UPLOAD_URL | 否 | - | 订阅上传地址 |
-| PROJECT_URL | 否 | https://www.google.com | 项目分配的域名 |
-| AUTO_ACCESS | 否 | false | 是否开启自动访问保活 |
-| PORT | 否 | 3000 | HTTP服务监听端口 |
-| ARGO_PORT | 否 | 8001 | Argo隧道端口 |
-| UUID | 否 | 9afd1229-b893-40c1-84dd-51e7ce204913 | 节点UUID |
-| NEZHA_SERVER | 否 | - | 哪吒面板域名 |
-| NEZHA_PORT | 否 | - | 哪吒端口 |
-| NEZHA_KEY | 否 | - | 哪吒密钥 |
-| ARGO_DOMAIN | 否 | - | Argo固定隧道域名,留空使用临时隧道 |
-| ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
-| CFIP | 否 | www.visa.com.tw | 节点优选域名或IP |
-| CFPORT | 否 | 443 | 节点端口 |
-| NAME | 否 |   | 节点名称前缀 |
-| FILE_PATH | 否 | ./tmp | 运行目录 |
-| SUB_PATH | 否 | sub | 订阅路径 |
-| CHAT_ID | 否 |   | 推送节点的chat id,需要和bot token同时填写生效 |
-| BOT_TOKEN | 否 |  | 推送节点的bot token |
-| SHOW_LOG | 否 | true | 是否显示日志,no/false/disable屏蔽,true/yes显示|
-
-## 🌐 订阅地址
-
-- 标准端口：`https://your-domain.com/sub`
-- 非标端口：`http://your-domain.com:port/sub`
+> **开源协议变更通知**：本项目自 **2025年10月29日 15:45** 起已更改开源协议，并包含以下强制性特定要求：
+> 1. **仅限个人使用**：严格禁止用于任何形式的商业行为（包括但不限于 YouTube、Bilibili、TikTok、Facebook 等平台的引流或盈利）。
+> 2. **禁止二次商业封装**：禁止新建项目将本代码复制至个人仓库用作商业用途。
+> 3. **合规使用**：请严格遵守当地法律法规，禁止滥用本程序搭建公共代理服务。
+> 4. **法律责任**：如有违反以上任何条款者，项目方保留追究其法律责任的权利。
 
 ---
 
-## 🚀 进阶使用
+## 📖 项目简介
 
-### 安装
+`nodejs-argo` 是一个轻量、高效的代理部署工具，特别适用于各类云原生容器环境和免费 PaaS 平台。
+
+### ✨ 核心特性
+- **多协议并发**：原生支持 VLESS、VMess、Trojan、Hysteria2、Reality 及 Socks5。
+- **探针无缝集成**：内置支持哪吒探针（支持 v0 与 v1 版本），自动识别端口并启用 TLS。
+- **隧道灵活配置**：支持 Cloudflare 临时隧道（免配置）与固定隧道（需 Token）双重模式。
+- **极简部署**：对于标准 Node.js 环境，仅需上传 `index.js` 和 `package.json` 即可运行。
+
+---
+
+## ⚙️ 环境变量配置字典 (Environment Variables)
+
+系统高度可定制，所有参数均为**可选（非必填）**。请根据实际需求在环境或 `.env` 文件中配置。
+
+### 1. 基础系统配置
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `PORT` | `3000` | Web 服务对外的 HTTP 监听端口 |
+| `FILE_PATH` | `.tmp` | 核心文件与配置的运行存放隐藏目录 |
+| `SHOW_LOG` | `no` | 是否显示控制台运行日志 (`true`/`yes` 显示，`false`/`no` 屏蔽) |
+
+### 2. 核心节点与伪装配置
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `UUID` | `9afd1229...` | 节点连接的唯一身份凭证 |
+| `SUB_PATH` | `vless` | 订阅链接的路径（例如：访问 `/vless` 获取节点） |
+| `CFIP` | `cf.saas...` | 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名 |
+| `CFPORT` | `443` | 订阅节点中连接的 CF 边缘端口 |
+| `NAME` | `vls` | 节点名称的前缀标识 |
+
+### 3. Cloudflare Argo 隧道配置
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `ARGO_DOMAIN` | *(参考源码)* | 隧道的 Public Hostname，**留空则自动启用临时隧道** |
+| `ARGO_AUTH` | *(参考源码)* | CF 隧道的 Token (`eyJh...`) 或 JSON 凭证文件内容 |
+| `ARGO_PORT` | `8001` | Xray 本地监听端口，用于承接隧道转发的流量 |
+
+### 4. 多协议直连配置 (适用于支持多端口开放的环境)
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `REALITY_PORT` | *(留空)* | VLESS-Reality 协议的公网直连 TCP 端口 |
+| `HY2_PORT` | *(留空)* | Hysteria2 协议的公网直连 UDP 端口 |
+| `S5_PORT` | *(参考源码)* | Socks5 协议的直连配置 (格式: `socks5://user:pass@ip:port`) |
+
+### 5. 哪吒探针配置 (Nezha Probe)
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `NEZHA_SERVER` | *(留空)* | 探针服务端地址（v1 填 `域名:端口`，v0 仅填 `域名`） |
+| `NEZHA_PORT` | *(留空)* | 探针服务端的 RPC 端口（仅 v0 需要填写，v1 留空） |
+| `NEZHA_KEY` | *(留空)* | 探针客户端的安全认证密钥 (Client Secret) |
+
+### 6. 订阅推送与自动化配置
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| `MY_WEB_URL` | *(参考源码)* | 本地文件保存的自定义 Web 订阅链接，优先使用此链接 |
+| `PROJECT_URL` | *(留空)* | 当前容器的公网 URL，配合 `UPLOAD_URL` 拼接订阅使用 |
+| `UPLOAD_URL` | *(留空)* | 第三方订阅面板 API 地址，用于自动上报与分发节点 |
+| `CHAT_ID` | *(留空)* | Telegram 接收通知的 Chat ID（留空禁用 TG 推送） |
+| `BOT_TOKEN` | *(留空)* | Telegram 机器人的 Token |
+
+---
+
+## 🌐 订阅获取方式
+
+节点成功运行后，您可以通过访问以下地址获取订阅内容：
+- **云平台访问 (自带 HTTPS)**：`https://你的域名/vless`
+- **本地/VPS 直连访问**：`http://你的IP或域名:端口/vless`
+*(注：路径后缀由环境变量 `SUB_PATH` 决定)*
+
+---
+
+## 🚀 安装与部署
+
+### 1. NPM 全局安装（推荐）
 
 ```bash
-# 全局安装（推荐）
+# 使用 npm 安装
 npm install -g nodejs-argo
 
-# 或者使用yarn
+# 或使用 yarn
 yarn global add nodejs-argo
 
-# 或者使用pnpm
+# 或使用 pnpm
 pnpm add -g nodejs-argo
-```
-
-### 基本使用
-
-```bash
-# 直接运行（使用默认配置）
-nodejs-argo
-
-# 使用npx运行
-npx nodejs-argo
-
-# 设置环境变量运行
- PORT=3000 npx nodejs-argo
-```
-
-### 环境变量配置
-
-可使用 `.env` 文件来配置环境变量运行
-
-
-或者直接在命令行中设置：
-
-```bash
-export UPLOAD_URL="https://your-merge-sub-domain.com"
-export PROJECT_URL="https://your-project-domain.com"
-export PORT=3000
-export UUID="your-uuid-here"
-export NEZHA_SERVER="nz.your-domain.com:8008"
-export NEZHA_KEY="your-nezha-key"
-```
-
-## 📦 作为npm模块使用
-
-```javascript
-// CommonJS
-const nodejsArgo = require('nodejs-argo');
-
-// ES6 Modules
-import nodejsArgo from 'nodejs-argo';
-
-// 启动服务
-nodejsArgo.start();
-```
-
-## 🔧 后台运行
-
-### 使用screen（推荐）
-```bash
-# 创建screen会话
-screen -S argo
-
-# 运行应用
-nodejs-argo
-
-# 按 Ctrl+A 然后按 D 分离会话
-# 重新连接：screen -r argo
-```
-
-### 使用tmux
-```bash
-# 创建tmux会话
-tmux new-session -d -s argo
-
-# 运行应用
-tmux send-keys -t argo "nodejs-argo" Enter
-
-# 分离会话：tmux detach -s argo
-# 重新连接：tmux attach -t argo
-```
-
-### 使用PM2
-```bash
-# 安装PM2
-npm install -g pm2
-
-# 启动应用
-pm2 start nodejs-argo --name "argo-service"
-
-# 管理应用
-pm2 status
-pm2 logs argo-service
-pm2 restart argo-service
-```
-
-### 使用systemd（Linux系统服务）
-```bash
-# 创建服务文件
-sudo nano /etc/systemd/system/nodejs-argo.service
-
-```
-[Unit]
-Description=Node.js Argo Service
-After=network.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/root/test
-Environment=ARGO_PORT=8080
-Environment=PORT=3000
-ExecStart=/usr/bin/npx nodejs-argo
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-# 启动服务
-sudo systemctl start nodejs-argo
-sudo systemctl enable nodejs-argo
-```
-
-## 🔄 更新
-
-```bash
-# 更新全局安装的包
-npm update -g nodejs-argo
-
-# 或者重新安装
-npm uninstall -g nodejs-argo
-npm install -g nodejs-argo
-```
-
-## 📚 更多信息
-
-- [GitHub仓库](https://github.com/eooce/nodejs-argo)
-- [npm包页面](https://www.npmjs.com/package/nodejs-argo)
-- [问题反馈](https://github.com/eooce/nodejs-argo/issues)
-
----
-
-## 赞助
-* 感谢[VPS.Town](https://vps.town)提供赞助 <a href="https://vps.town" target="_blank"><img src="https://vps.town/static/images/sponsor.png" width="30%" alt="https://vps.town"></a>
-
-* 感谢[ZMTO](https://zmto.com/?affid=1548)提供赞助优质双isp vps。
