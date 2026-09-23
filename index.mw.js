@@ -22,10 +22,7 @@ const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 唯�
 
 // [自动化附加功能配置]
 const UPLOAD_URL = process.env.UPLOAD_URL || '';            // 节点自动上传地址
-const PROJECT_URL = process.env.PROJECT_URL || '';          // 当前容器的公网 URL，配合保活或上传使用
-const AUTO_ACCESS = process.env.AUTO_ACCESS || false;       // 是否开启自动保活 (需配合 PROJECT_URL)
-const CHAT_ID = process.env.CHAT_ID || '';                  // Telegram 接收通知的 Chat ID
-const BOT_TOKEN = process.env.BOT_TOKEN || '';              // Telegram 机器人的 Token
+const PROJECT_URL = process.env.PROJECT_URL || '';          // 当前容器的公网 URL，配合上传使用
 const MY_WEB_DOMAIN = process.env.MY_WEB_DOMAIN || 'vls-wispbyte.wct.kdns.fr';      // 自定义 Web 订阅域名，系统会自动拼接 https:// 和 SUB_PATH
 
 // [Cloudflare Argo 隧道配置]
@@ -36,7 +33,7 @@ const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 隧道本地监�
 // [节点伪装与优选配置]
 const CFIP = process.env.CFIP || 'cf.saas.sin.fan';            // 优选域名或 IP
 const CFPORT = parseInt(process.env.CFPORT || 443, 10);     // 优选端口
-const NAME = process.env.NAME || '';                        // 节点名称前缀
+const NAME = process.env.NAME || 'vless';                        // 节点名称前缀
 
 // [多协议直连端口]
 const S5_PORT = process.env.S5_PORT || '';                  // Socks5 端口 (注意：只能填纯数字端口号，如 10001)
@@ -418,7 +415,7 @@ async function uploadNodes() {
 }
 
 // ========================================================
-// 4. 定时清理与保活服务
+// 4. 定时清理
 // ========================================================
 
 // 融合：保持用户的“静默体验”，但恢复关键文件的清理保障安全
@@ -438,26 +435,6 @@ function cleanFiles() {
 }
 cleanFiles();
 
-// 最新原版加入的自动保活机制
-async function AddVisitTask() {
-  if (!AUTO_ACCESS || !PROJECT_URL) return;
-  try {
-    await axios.post('https://oooo.serv00.net/add-url', { url: PROJECT_URL }, { headers: { 'Content-Type': 'application/json' } });
-    console.log(`automatic access task added successfully`);
-  } catch (error) {
-    console.error(`Add automatic access task faild: ${error.message}`);
-  }
-}
-
-async function sendTelegram() {
-  if (!BOT_TOKEN || !CHAT_ID) return;
-  try {
-    const message = fs.readFileSync(subPath, 'utf8');
-    const escapedName = NAME.replace(/[_*\[\]()~`>#+=|{}.!-]/g, '\\$&');
-    await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, null, { params: { chat_id: CHAT_ID, text: `**${escapedName}节点推送**\n\`\`\`${message}\`\`\``, parse_mode: 'MarkdownV2' } });
-  } catch (error) {}
-}
-
 async function startserver() {
   try {
     argoType();
@@ -468,8 +445,6 @@ async function startserver() {
     await generateConfig();
     await downloadFilesAndRun();
     await extractDomains();
-    await sendTelegram();
-    await AddVisitTask();
   } catch (error) { console.error('Error in startserver:', error); }
 }
 startserver();
