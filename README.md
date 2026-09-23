@@ -25,8 +25,8 @@
 ### ✨ 核心特性
 - **多协议并发**：原生支持 VLESS、VMess、Trojan、Hysteria2、Reality 及 Socks5。
 - **探针无缝集成**：内置支持哪吒探针（支持 v0 与 v1 版本），自动识别端口并启用 TLS。
-- **隧道灵活配置**：支持 Cloudflare 临时隧道（免配置）与固定隧道（需 Token）双重模式。
-- **极简部署**：对于标准 Node.js 环境，仅需上传 `index.js` 和 `package.json` 即可运行。
+- **隧道灵活配置**：支持 Cloudflare 临时隧道（免配置）与固定隧道（需 Token 或 JSON）双重模式。
+- **极简部署**：对于标准 Node.js 环境，仅需上传核心脚本即可一键运行，内置自动保活与防失联机制。
 
 ---
 
@@ -38,56 +38,59 @@
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `PORT` | `3000` | Web 服务对外的 HTTP 监听端口 |
-| `FILE_PATH` | `.tmp` | 核心文件与配置的运行存放隐藏目录 |
-| `SHOW_LOG` | `no` | 是否显示控制台运行日志 (`true`/`yes` 显示，`false`/`no` 屏蔽) |
+| `FILE_PATH` | `.npm` | 核心文件与配置的运行存放隐藏目录 |
+| `SHOW_LOG` | `true` | 是否显示控制台运行日志 (`true`/`yes` 显示，`false`/`no` 屏蔽) |
 
 ### 2. 核心节点与伪装配置
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `UUID` | `9afd1229...` | 节点连接的唯一身份凭证 |
-| `SUB_PATH` | `vless` | 订阅链接的路径（例如：访问 `/vless` 获取节点） |
-| `CFIP` | `cf.saas...` | 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名 |
+| `SUB_PATH` | `sub` | 订阅链接的路由路径（例如：访问 `/sub` 获取节点） |
+| `CFIP` | `saas.sin.fan` | 订阅节点中显示的 CF 优选 IP 或优选 CNAME 域名 |
 | `CFPORT` | `443` | 订阅节点中连接的 CF 边缘端口 |
-| `NAME` | `vls` | 节点名称的前缀标识 |
+| `NAME` | *(留空)* | 节点名称的前缀标识 |
 
 ### 3. Cloudflare Argo 隧道配置
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `ARGO_DOMAIN` | *(参考源码)* | 隧道的 Public Hostname，**留空则自动启用临时隧道** |
-| `ARGO_AUTH` | *(参考源码)* | CF 隧道的 Token (`eyJh...`) 或 JSON 凭证文件内容 |
+| `ARGO_DOMAIN` | *(留空)* | 固定隧道的 Public Hostname，**留空则自动启用临时隧道** |
+| `ARGO_AUTH` | *(留空)* | CF 隧道的 Token (`eyJh...`) 或 JSON 凭证文件内容，**留空启用临时隧道** |
 | `ARGO_PORT` | `8001` | Xray 本地监听端口，用于承接隧道转发的流量 |
 
 ### 4. 多协议直连配置 (适用于支持多端口开放的环境)
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `REALITY_PORT` | *(留空)* | VLESS-Reality 协议的公网直连 TCP 端口 |
+| `REALITY_PORT`| *(留空)* | VLESS-Reality 协议的公网直连 TCP 端口 |
 | `HY2_PORT` | *(留空)* | Hysteria2 协议的公网直连 UDP 端口 |
-| `S5_PORT` | *(参考源码)* | Socks5 协议的直连配置 (格式: `socks5://user:pass@ip:port`) |
+| `S5_PORT` | *(留空)* | Socks5 协议的公网直连 TCP 端口。**⚠️ 注意：只能填纯数字端口号（如 `10001`），系统会自动使用 UUID 生成账号密码，切勿填写完整 URL。** |
 
 ### 5. 哪吒探针配置 (Nezha Probe)
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `NEZHA_SERVER` | *(留空)* | 探针服务端地址（v1 填 `域名:端口`，v0 仅填 `域名`） |
 | `NEZHA_PORT` | *(留空)* | 探针服务端的 RPC 端口（仅 v0 需要填写，v1 留空） |
-| `NEZHA_KEY` | *(留空)* | 探针客户端的安全认证密钥 (Client Secret) |
+| `NEZHA_KEY` | *(留空)* | 探针客户端的安全认证密钥 (Client Secret / Agent Key) |
 
 ### 6. 订阅推送与自动化配置
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `MY_WEB_URL` | *(参考源码)* | 本地文件保存的自定义 Web 订阅链接，优先使用此链接 |
-| `PROJECT_URL` | *(留空)* | 当前容器的公网 URL，配合 `UPLOAD_URL` 拼接订阅使用 |
-| `UPLOAD_URL` | *(留空)* | 第三方订阅面板 API 地址，用于自动上报与分发节点 |
-| `CHAT_ID` | *(留空)* | Telegram 接收通知的 Chat ID（留空禁用 TG 推送） |
-| `BOT_TOKEN` | *(留空)* | Telegram 机器人的 Token |
+| `MY_WEB_DOMAIN`| *(留空)* | 自定义 Web 订阅域名，填入域名系统会自动拼接 `https://` 并在本地生成记录。 |
+| `PROJECT_URL` | *(留空)* | 当前容器的公网 URL，配合 `UPLOAD_URL` 拼接订阅，或配合自动保活使用。 |
+| `AUTO_ACCESS` | `false` | **[新增]** 是否开启 Serv00 等平台的自动保活任务（填入 `true` 开启，需配合 `PROJECT_URL` 使用）。 |
+| `UPLOAD_URL` | *(留空)* | 第三方订阅面板 API 地址，用于自动上报与分发节点（例如 Merge-sub 地址）。 |
+| `CHAT_ID` | *(留空)* | Telegram 接收通知的 Chat ID（留空则禁用 TG 推送）。 |
+| `BOT_TOKEN` | *(留空)* | Telegram 机器人的 Token。 |
 
 ---
 
 ## 🌐 订阅获取方式
 
 节点成功运行后，您可以通过访问以下地址获取订阅内容：
-- **云平台访问 (自带 HTTPS)**：`https://你的域名/vless`
-- **本地/VPS 直连访问**：`http://你的IP或域名:端口/vless`
-*(注：路径后缀由环境变量 `SUB_PATH` 决定)*
+- **云平台访问 (自带 HTTPS)**：`https://你的自定义域名/sub`
+- **本地/VPS 直连访问**：`http://你的IP或域名:端口/sub`
+*(注：路径后缀由环境变量 `SUB_PATH` 决定，默认已修改为 `/sub`)*
+
+💡 *系统启动后，也会在 `FILE_PATH` 目录下自动生成 `web_url.txt`，方便您随时查看当前的订阅直连地址。*
 
 ---
 
