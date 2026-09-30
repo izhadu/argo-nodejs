@@ -31,7 +31,7 @@ const ARGO_AUTH = process.env.ARGO_AUTH || 'eyJhIjoiOGI0YjkxZDNiNWNjZGMzNDEzM2I4
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 隧道本地监听端口
 
 // [节点伪装与优选配置]
-const CFIP = process.env.CFIP || 'cf.saas.sin.fan';            // 优选域名或 IP
+const CFIP = process.env.CFIP || 'cf.saas.zhadu.com';            // 优选域名或 IP
 const CFPORT = parseInt(process.env.CFPORT || 443, 10);     // 优选端口
 const NAME = process.env.NAME || 'vless';                        // 节点名称前缀
 
