@@ -1,20 +1,16 @@
 {
-  "name": "nodejs",
-  "version": "1,0,0",
-  "description": "Thsi is a node project",
+  "name": "nodejs-web-app",
+  "version": "1.0.0",
+  "description": "Lightweight Node.js HTTP Server",
   "main": "index.js",
-  "author": "",
-  "repository": "",
-  "license": "MIT",
-  "private": false,
   "scripts": {
-    "dev": "node index.js",
     "start": "node index.js"
   },
-  "dependencies": {
-    "axios": "latest"
-  },
   "engines": {
-    "node": ">=14"
-  }
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "license": "MIT"
 }
